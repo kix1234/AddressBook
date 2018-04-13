@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block _contact_form_phoneNumbers_entry_widget %}
+    <div class="form-group form-inline">
+        {{ form_widget(form.number, {attr: {class: 'form-control', placeholder: 'Phone number'}}) }}
+        {{ form_widget(form.phoneNumberType, {attr: {class: 'form-control'}})}}
+    </div>
+{% endblock %}
+
+{% block _contact_form_groups_entry_widget %}
+    <div class="form-group form-inline">
+        {{ form_widget(form.name, {attr: {class: 'form-control', placeholder: 'Group name'}}) }}
+        {{ form_widget(form.isFavorite, {attr: {class: 'form-control'}})}}
+    </div>
+{% endblock %}
+
+{% block _contact_form_emails_entry_widget %}
+    <div class="form-group form-inline">
+        {{ form_widget(form.email, {attr: {class: 'form-control', placeholder: 'Email'}}) }}
+        {{ form_widget(form.emailAddressType, {attr: {class: 'form-control'}})}}
+    </div>
+{% endblock %}
+
+{% block _contact_form_addresses_entry_widget %}
+    <div class="form-group form-inline">
+        {{ form_widget(form.street, {attr: {class: 'form-control', placeholder: 'Street'}}) }}
+        {{ form_widget(form.postalCode, {attr: {class: 'form-control', placeholder: 'Postal code'}}) }}
+        {{ form_widget(form.country, {attr: {class: 'form-control', onchange: 'changeCountry(this)'}})}}
+        {{ form_widget(form.city, {attr: {class: 'form-control'}})}}
+    </div>
+{% endblock %}
+
+{% block body  %}
+
+    <h3>Add New Contact</h3><br>
+
+    <div class="row">
+        <div class="col-xs-10">
+        {{ form_start(form) }}
+
+            <div class="form-group">{{ form_row(form.firstName, {attr:{class: 'form-control'}}) }}</div>
+            <div class="form-group">{{ form_row(form.lastName, {attr:{class: 'form-control'}}) }}</div>
+            <div class="form-group">{{ form_row(form.defaultNumber, {attr:{class: 'form-control'}}) }}</div>
+            <div class="form-group">{{ form_row(form.isFavorite) }}</div>
+
+
+            <h4>Phones</h4>
+            <ol id="phoneNumbers" prototype="{{form_widget(form.phoneNumbers.vars.prototype)|e}}">
+                <a href="#" class="add-phone-numbers btn-sm btn-success" data-list="#phoneNumbers">Add</a>
+            </ol>
+
+            <h4>Groups</h4>
+            <ol id="groups" prototype="{{form_widget(form.groups.vars.prototype)|e}}">
+                <a href="#" class="add-groups btn-sm btn-success" data-list="#groups">Add</a>
+            </ol>
+
+
+            <h4>Emails</h4>
+            <ol id="emails" prototype="{{form_widget(form.emails.vars.prototype)|e}}">
+                <a href="#" class="add-emails btn-sm btn-success" data-list="#emails">Add</a>
+            </ol>
+
+            <h4>Addresses</h4>
+            <ol id="addresses" prototype="{{form_widget(form.addresses.vars.prototype)|e}}">
+                <a href="#" class="add-addresses btn-sm btn-success" data-list="#addresses">Add</a>
+            </ol>
+
+            <input type="submit" value="Save Contact" class="btn btn-primary" />
+
+        {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+
+        var index = 0;
+
+        $(document).ready(function () {
+            addWidget('.add-phone-numbers',5);
+            addWidget('.add-emails',0);
+            addWidget('.add-addresses',0);
+            addWidget('.add-groups',0)
+        });
+
+        function addWidget(element, count)
+        {
+            $(element).click(function (e)
+            {
+                var list, counter, newElem;
+
+                e.preventDefault();
+
+                list = $($(this).attr('data-list'));
+
+                counter = list.data('widget-counter') | list.children().length;
+                if (!counter) { counter = list.children().length; }
+
+                //add new widget
+                if(counter <= count || count == 0)
+                {
+                    index++;
+
+                    var newWidget = list.attr('prototype');
+                    newWidget = newWidget.replace(/__name__/g, index);
+
+                    newElem = $('<li class="form-inline form-group"></li>').html(newWidget);
+                    newElem.appendTo(list);
+
+                    //update counter
+                    counter++;
+                    list.data(' widget-counter', counter);
+
+                    //add remove link
+                    $(element).before(newElem);
+
+                    var removeLink = $('<span> </span><a href="#" class="btn btn-danger">Delete</a>');
+                    newElem.append(removeLink);
+
+                    removeLink.on('click', function(e) {
+                        e.preventDefault();
+                        newElem.remove();
+                    });
+                }
+            });
+        }
+
+        function changeCountry($this) {
+            $.ajax({
+                url: "{{ path('getCities_contact') }}",
+                type: "GET",
+                dataType: "JSON",
+                data: {countryId: $('#' + $this.id).val()},
+
+                success: function (cities) {
+
+                    var citySel = $('#' + $this.id.replace('country','city'));
+
+                    citySel.html('');
+
+                    $.each(cities, function (key, city) {
+                        citySel.append('<option value="' + city.id + '">' + city.name + '</option>');
+                    });
+                },
+                error: function (err) {
+                    alert('An error ocurred while loading data. Please try again.')
+                }
+            });
+        }
+    </script>
+{% endblock %}

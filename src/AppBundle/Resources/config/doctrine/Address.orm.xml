@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doctrine-mapping 
+	xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="AppBundle\Entity\Address" table="addresses">
+
+        <id name="id" type="integer"><generator strategy="AUTO" /></id>
+
+        <field name="street" type="string" length="50" />
+        <field name="postalCode" type="string" length="10" />
+
+        <many-to-one target-entity="AppBundle\Entity\Contact" field="contact" inversed-by="addresses" join-column="contact">
+            <join-column name="contactId" referenced-column-name="id" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <many-to-one target-entity="AppBundle\Entity\City" field="city">
+           <join-column name="cityId" referenced-column-name="id"></join-column>
+        </many-to-one>
+
+    </entity>
+</doctrine-mapping>

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h3>Contact Details</h3><br>
+
+    <p>
+        <b>Contact Name</b>: {{ contact.firstName }} {{ contact.lastName }}{{ contact.isFavorite|replace({'1':', Favorite'}) }}
+    </p>
+
+    <p><b>Default Numbers:</b> {{ contact.defaultNumber }}</p>
+
+    <b>Phone Numbers:</b>
+    <ul>
+        {% for phoneNumber in  contact.phoneNumbers %}
+            <li>{{ phoneNumber.number }}, {{ phoneNumber.phoneNumberType.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <b>Groups:</b>
+    <ul>
+        {% for group in contact.groups %}
+            <li>{{ group.name }}{{ group.isFavorite|replace({'1':', Favorite'}) }}</li>
+        {% endfor %}
+    </ul>
+
+    <b>Emails:</b>
+    <ul>
+        {% for email in  contact.emails %}
+            <li>{{ email.email }}, {{ email.emailAddressType.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <b>Addresses:</b>
+    <ul>
+        {% for address in  contact.addresses %}
+            <li>{{ address.street }}, {{ address.postalCode }}, {{ address.city.name }}, {{ address.city.country.name }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

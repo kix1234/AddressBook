@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h3>Group Details</h3><br>
+
+    <p>
+        <b>Group Name</b>: {{ group.name }} {{ group.isFavorite|replace({'1':', Favorite'}) }}
+    </p>
+    <br>
+
+    <a href="{{ path('add_contact_from_group', {'id': group.id}) }}" class="btn-sm btn-primary">Add to Group</a><br><br>
+
+    {{ form_start(form) }}
+    <table class="table table-hover">
+        <tr>
+            <th>Contact Name</th>
+            <th>Default Number</th>
+            <th>Favorite Number</th>
+            <th>#</th>
+        </tr>
+
+        {% for contact in group.contacts  %}
+            <tr>
+                <td>{{ contact.firstName }} {{ contact.lastName }}</td>
+                <td>{{ contact.defaultNumber }}</td>
+                <td>{{ contact.isFavorite|default('No')|replace({'1':'Yes'}) }}</td>
+                <td><input type="checkbox" value="{{ contact.id }}" name="cb[]"></td>
+            </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="Remove from Group" class="btn-xs btn-danger" />
+    {{ form_end(form) }}
+
+{% endblock %}

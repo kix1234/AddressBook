@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <a href="{{ path('new_contact') }}" class="btn-sm btn-primary">New Contact</a><br><br>
+
+    <table class="table table-hover">
+        <tr>
+            <th>Contact Name</th>
+            <th>Default Number</th>
+            <th>Favorite Number</th>
+            <th></th>
+        </tr>
+
+        {% for contact in contacts  %}
+            <tr>
+                <td>
+                    {{ contact.firstName }} {{ contact.lastName }}
+                </td>
+                <td>
+                    {{ contact.defaultNumber }}</td>
+                <td>
+                    {{ contact.isFavorite|default('No')|replace({'1':'Yes'}) }}
+                </td>
+                <td>
+                    <a href="{{ path('details_contact',{'id': contact.id})}}" class="btn-sm btn-success">Detais</a>
+                    <a href="{{ path('edit_contact',{'id': contact.id})}}" class="btn-sm btn-warning">Edit</a>
+                    <a href="{{ path('delete_contact',{'id': contact.id})}}"  class="btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
+
+

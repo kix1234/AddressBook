@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doctrine-mapping
+        xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="AppBundle\Entity\Contact" table="contacts" repository-class="AppBundle\Repository\ContactRepository">
+
+        <id name="id" type="integer"><generator strategy="AUTO"/></id>
+        <field name="firstName" type="string" length="30"/>
+        <field name="lastName" type="string" length="30"/>
+        <field name="isFavorite" type="boolean"/>
+        <field name="defaultNumber" type="string" length="30"/>
+
+        <one-to-many target-entity="AppBundle\Entity\PhoneNumber" mapped-by="contact" field="phoneNumbers">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many target-entity="AppBundle\Entity\Address" mapped-by="contact" field="addresses">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <one-to-many target-entity="AppBundle\Entity\EmailAddress" mapped-by="contact" field="emails">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+        </one-to-many>
+
+        <many-to-many target-entity="AppBundle\Entity\ContactGroup" inversed-by="contacts" field="groups">
+            <cascade>
+                <cascade-persist/>
+            </cascade>
+            <join-table name="contacts_groups">
+                <join-columns>
+                    <join-column name="contactId" referenced-column-name="id" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="groupId" referenced-column-name="id" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
+    </entity>
+</doctrine-mapping>
