@@ -3,14 +3,22 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 class ContactRepository extends EntityRepository
 {
-    public function getContactsNotExistInGroup($groupId)
+    public function getContactsNotExistInGroup($group)
     {
-        /*
-         * via QB
-         */
+        // via MEMBER OF
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Contact', 'c')
+            ->where(':group NOT MEMBER OF c.groups')
+            ->setParameter('group', $group)
+            ->getQuery()->getResult();
+
+
+        /* via SQL IN
         $sq = $this->getEntityManager()->createQueryBuilder()
             ->select('c.id')
             ->from('AppBundle:Contact', 'c')
@@ -27,8 +35,9 @@ class ContactRepository extends EntityRepository
             ->where($q->expr()->notIn('c.id', ':sq'))
             ->setParameter('sq', $sq)
             ->getQuery()->getResult();
+        */
 
-        /* via DQL
+        /* via SQL IN DQL
         return $this->getEntityManager()
             ->createQuery('select c from AppBundle:Contact c
                       where c.id

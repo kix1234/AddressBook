@@ -143,7 +143,7 @@ class GroupController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $contacts = $em->getRepository(Contact::class)
-            ->getContactsNotExistInGroup($group->getId());
+            ->getContactsNotExistInGroup($group);
 
         $form = $this->createFormBuilder()->getForm();
 
